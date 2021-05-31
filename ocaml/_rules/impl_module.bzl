@@ -198,6 +198,7 @@ def impl_module(ctx):
         args.add("-no-alias-deps")
         args.add("-open", ctx.attr._ns_resolver[OcamlNsResolverProvider].resolver)
 
+    args.add("-cc", tc.cc_toolchain.compiler_executable)
     args.add("-c")
     args.add("-o", out_cm_)
 

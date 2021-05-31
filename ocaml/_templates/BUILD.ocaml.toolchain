@@ -32,7 +32,7 @@ toolchain(
 ocaml_toolchain(
     name = "ocaml_toolchain_linux",
     linkmode = "static",
-    cc_toolchain = "gcc"
+    assembler = "ASSEMBLER",
 )
 
 ##########
@@ -53,5 +53,5 @@ toolchain(
 ocaml_toolchain(
     name = "ocaml_toolchain_macos",
     linkmode = "dynamic",
-    cc_toolchain = "clang",
+    assembler = "ASSEMBLER",
 )

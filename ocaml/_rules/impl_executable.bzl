@@ -234,6 +234,8 @@ def impl_executable(ctx):
     for path in paths_depset.to_list():
         includes.append(path)
 
+    cctc = ctx.toolchains["@obazl_rules_ocaml//ocaml:toolchain"].cc_toolchain
+    args.add("-cc", cctc.compiler_executable)
     args.add_all(includes, before_each="-I")
 
     ## use depsets to get the right ordering. archive and module links are mutually exclusive.

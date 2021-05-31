@@ -132,7 +132,8 @@ def get_projroot(ctx):
 
 def get_sdkpath(ctx):
   sdkpath = ctx.attr._sdkpath[OcamlSDK].path + "/bin"
-  return sdkpath + ":/usr/bin:/bin:/usr/sbin:/sbin"
+  tc = ctx.toolchains["@obazl_rules_ocaml//ocaml:toolchain"]
+  return sdkpath + ":/usr/bin:/bin:/usr/sbin:/sbin:" + paths.dirname(tc.assembler)
 
 def split_srcs(srcs):
   intfs = []
