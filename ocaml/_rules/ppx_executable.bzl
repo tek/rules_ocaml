@@ -114,5 +114,6 @@ By default, this rule adds `-predicates ppx_driver` to the command line.
     # provides = [DefaultInfo, PpxExecutableProvider],
     executable = True,
     ## NB: 'toolchains' actually means 'toolchain types'
-    toolchains = ["@obazl_rules_ocaml//ocaml:toolchain"],
+    fragments = ["cpp"],
+    toolchains = ["@obazl_rules_ocaml//ocaml:toolchain", "@bazel_tools//tools/cpp:toolchain_type"],
 )

@@ -41,5 +41,6 @@ In addition to the [OCaml configurable defaults](#configdefs) that apply to all
     ),
     cfg     = executable_in_transition,
     executable = True,
-    toolchains = ["@obazl_rules_ocaml//ocaml:toolchain"],
+    fragments = ["cpp"],
+    toolchains = ["@obazl_rules_ocaml//ocaml:toolchain", "@bazel_tools//tools/cpp:toolchain_type"],
 )

@@ -1,6 +1,7 @@
 load("@bazel_skylib//rules:common_settings.bzl", "BuildSettingInfo")
 load("@bazel_skylib//lib:new_sets.bzl", "sets")
 load("@bazel_skylib//lib:paths.bzl", "paths")
+load("@bazel_tools//tools/cpp:toolchain_utils.bzl", "find_cpp_toolchain")
 
 load("//ocaml:providers.bzl",
      "AdjunctDepsProvider",
@@ -83,6 +84,7 @@ def impl_module(ctx):
     }
 
     tc = ctx.toolchains["@obazl_rules_ocaml//ocaml:toolchain"]
+    cc_toolchain = find_cpp_toolchain(ctx)
 
     mode = ctx.attr._mode[CompilationModeSettingProvider].value
 
@@ -198,7 +200,7 @@ def impl_module(ctx):
         args.add("-no-alias-deps")
         args.add("-open", ctx.attr._ns_resolver[OcamlNsResolverProvider].resolver)
 
-    args.add("-cc", tc.cc_toolchain.compiler_executable)
+    args.add("-cc", cc_toolchain.compiler_executable)
     args.add("-c")
     args.add("-o", out_cm_)
 

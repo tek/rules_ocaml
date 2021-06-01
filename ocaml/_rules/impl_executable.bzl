@@ -1,4 +1,6 @@
 load("@bazel_skylib//rules:common_settings.bzl", "BuildSettingInfo")
+load("@bazel_skylib//lib:paths.bzl", "paths")
+load("@bazel_tools//tools/cpp:toolchain_utils.bzl", "find_cpp_toolchain")
 
 load("//ocaml:providers.bzl",
      "AdjunctDepsProvider",
@@ -57,6 +59,9 @@ def _handle_cc_deps(ctx,
             else:
                 ccdeps.update({dep: linkmode})
 
+    cc_toolchain = find_cpp_toolchain(ctx)
+    # TODO determine this from the toolchain
+    compiler = paths.basename(cc_toolchain.compiler_executable)
     for [dep, linkmode] in cc_deps_dict.items():
         if debug:
             print("CCLIB DEP: ")
@@ -97,9 +102,9 @@ def _handle_cc_deps(ctx,
                 if (depfile.extension == "a"):
                     cclib_deps.append(depfile)
                     includes.append(depfile.dirname)
-                    if ctx.toolchains["@obazl_rules_ocaml//ocaml:toolchain"].cc_toolchain == "clang":
+                    if compiler == "clang":
                         args.add("-ccopt", "-Wl,-force_load,{path}".format(path = depfile.path))
-                    elif ctx.toolchains["@obazl_rules_ocaml//ocaml:toolchain"].cc_toolchain == "gcc":
+                    elif compiler == "gcc":
                         libname = file_to_lib_name(depfile)
                         args.add("-ccopt", "-L{dir}".format(dir=depfile.dirname))
                         args.add("-ccopt", "-Wl,--push-state,-whole-archive")
@@ -234,8 +239,8 @@ def impl_executable(ctx):
     for path in paths_depset.to_list():
         includes.append(path)
 
-    cctc = ctx.toolchains["@obazl_rules_ocaml//ocaml:toolchain"].cc_toolchain
-    args.add("-cc", cctc.compiler_executable)
+    cc_toolchain = find_cpp_toolchain(ctx)
+    args.add("-cc", cc_toolchain.compiler_executable)
     args.add_all(includes, before_each="-I")
 
     ## use depsets to get the right ordering. archive and module links are mutually exclusive.

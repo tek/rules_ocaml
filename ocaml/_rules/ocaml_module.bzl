@@ -56,5 +56,6 @@ In addition to the [OCaml configurable defaults](#configdefs) that apply to all
     cfg     = module_in_transition,
     provides = [OcamlModuleProvider],
     executable = False,
-    toolchains = ["@obazl_rules_ocaml//ocaml:toolchain"],
+    fragments = ["cpp"],
+    toolchains = ["@obazl_rules_ocaml//ocaml:toolchain", "@bazel_tools//tools/cpp:toolchain_type"],
 )

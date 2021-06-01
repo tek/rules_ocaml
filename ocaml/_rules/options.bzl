@@ -56,6 +56,9 @@ def options(ws):
         _sdkpath = attr.label(
             default = Label("@ocaml//:path") # ppx also uses this
         ),
+        _cc_toolchain = attr.label(
+            default = Label("@bazel_tools//tools/cpp:current_cc_toolchain"),
+        ),
     )
 
 #######################

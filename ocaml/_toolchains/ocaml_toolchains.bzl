@@ -1,7 +1,6 @@
 load("//ocaml:providers.bzl",
      "CompilationModeSettingProvider",
      "OcamlSDK")
-load("@bazel_tools//tools/cpp:toolchain_utils.bzl", "find_cpp_toolchain")
 
 ## obtaining CC toolchain:  https://github.com/bazelbuild/bazel/issues/7260
 
@@ -41,11 +40,6 @@ _ocaml_tools_attrs = {
     "assembler": attr.string(
         doc = "Path to the 'as' executable"
     ),
-    ## Hack, until we figure out how to use platforms to support clang on linux
-    "_cc_toolchain": attr.label(
-        default = Label("@bazel_tools//tools/cpp:current_cc_toolchain"),
-    ),
-
     ## FIXME: these should be provided by the toolchain definition?
     "_ocamlc": attr.label(
         default = Label("@ocaml//tools:ocamlc"),
@@ -160,7 +154,6 @@ def _ocaml_toolchain_impl(ctx):
         ocamllex   = ctx.attr._ocamllex.files.to_list()[0],
         ocamlyacc  = ctx.attr._ocamlyacc.files.to_list()[0],
         assembler = ctx.attr.assembler,
-        cc_toolchain = find_cpp_toolchain(ctx),
         copts       = ctx.attr._copts,
         # ocamlbuild = ctx.attr._ocamlbuild.files.to_list()[0],
         ocamlfind  = ctx.attr._ocamlfind.files.to_list()[0],
@@ -175,5 +168,4 @@ ocaml_toolchain = rule(
   attrs = _ocaml_tools_attrs,
   doc = "Defines a Ocaml toolchain based on an SDK",
   provides = [platform_common.ToolchainInfo],
-  fragments = ["cpp"],
 )

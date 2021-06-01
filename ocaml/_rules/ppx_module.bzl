@@ -40,5 +40,6 @@ TODO: finish docstring
     cfg     = module_in_transition,
     provides = [PpxModuleProvider, OpamDepsProvider],
     executable = False,
-    toolchains = ["@obazl_rules_ocaml//ocaml:toolchain"],
+    fragments = ["cpp"],
+    toolchains = ["@obazl_rules_ocaml//ocaml:toolchain", "@bazel_tools//tools/cpp:toolchain_type"],
 )
