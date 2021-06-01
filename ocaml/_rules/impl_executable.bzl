@@ -1,5 +1,4 @@
 load("@bazel_skylib//rules:common_settings.bzl", "BuildSettingInfo")
-load("@bazel_skylib//lib:paths.bzl", "paths")
 load("@bazel_tools//tools/cpp:toolchain_utils.bzl", "find_cpp_toolchain")
 
 load("//ocaml:providers.bzl",
@@ -59,9 +58,7 @@ def _handle_cc_deps(ctx,
             else:
                 ccdeps.update({dep: linkmode})
 
-    cc_toolchain = find_cpp_toolchain(ctx)
-    # TODO determine this from the toolchain
-    compiler = paths.basename(cc_toolchain.compiler_executable)
+    compiler = "gcc" if ctx.toolchains["@obazl_rules_ocaml//ocaml:toolchain"].name == "ocaml_toolchain_linux" else "clang"
     for [dep, linkmode] in cc_deps_dict.items():
         if debug:
             print("CCLIB DEP: ")
