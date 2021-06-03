@@ -16,6 +16,7 @@ load("//ocaml:providers.bzl",
      "OpamDepsProvider",
      "PpxArchiveProvider",
      "PpxModuleProvider",
+     "PpxLibraryProvider",
      "PpxNsArchiveProvider",
      "PpxNsLibraryProvider")
 
@@ -296,6 +297,7 @@ In addition to the [OCaml configurable defaults](#configdefs) that apply to all
                 [OcamlSignatureProvider],
                 [PpxArchiveProvider],
                 [PpxModuleProvider],
+                [PpxLibraryProvider],
                 [PpxNsArchiveProvider],
                 [PpxNsLibraryProvider],
             ],
