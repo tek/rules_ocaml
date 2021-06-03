@@ -28,7 +28,6 @@ def _ocaml_yacc_impl(ctx):
 
   yaccer = ctx.actions.declare_file(tmpdir + yaccer_fname)
   yacceri = ctx.actions.declare_file(tmpdir + yacceri_fname)
-  print(tc)
 
   ctx.actions.run_shell(
       env = env,
