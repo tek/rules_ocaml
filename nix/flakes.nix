@@ -2,12 +2,14 @@
   nixpkgs,
   flake-utils,
   ...
-}: { extraInputs ? _: [], depsOpam ? [] }:
+}: args@{
+  extraInputs ? _: [],
+}:
 let
   main = system: 
   let
     pkgs = import nixpkgs { inherit system; };
-    opam = import ./opam.nix { inherit pkgs depsOpam; };
+    opam = import ./opam.nix ({ inherit pkgs; } // args);
   in rec {
     apps = {
       install = {
