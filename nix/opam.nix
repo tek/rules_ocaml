@@ -22,6 +22,7 @@ installDeps =
       ${opam} switch create 4.10 ocaml-base-compiler.4.10.2
     fi
     eval $(${opam} env)
+    ${opamPkg "ocamlfind"}
     ${pkgs.lib.strings.concatMapStringsSep "\n" opamPkg depsOpam}
   '';
 
