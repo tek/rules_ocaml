@@ -4,6 +4,7 @@
   ...
 }: args@{
   extraInputs ? _: [],
+  ...
 }:
 let
   main = system: 
