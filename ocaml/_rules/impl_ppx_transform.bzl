@@ -98,7 +98,6 @@ def impl_ppx_transform(rule, ctx, src, to):
                     ])
 
     command = "\n".join([
-        "#!/bin/sh",
         "set {set}".format(set = "-x" if verbose else "+x"),
         "mkdir -p {v} {tmpdir}{path}".format(v = "-v" if verbose else "",
                                               tmpdir=tmpdir,
@@ -129,10 +128,11 @@ def impl_ppx_transform(rule, ctx, src, to):
         content = command,
         is_executable = True,
     )
+    dep_graph.append(runner)
 
-    ctx.actions.run(
+    ctx.actions.run_shell(
         env = env,
-        executable = runner,
+        command = runner.path + " $*",
         arguments = [args],
         inputs = dep_graph,
         outputs = [outfile],
