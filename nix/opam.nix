@@ -1,4 +1,4 @@
-{ pkgs, depsOpam ? [], ... }:
+{ pkgs, depsOpam ? [], switch ? "4.10", compiler ? "ocaml-base-compiler.4.10.2", ... }:
 let
   opam = "${pkgs.opam}/bin/opam";
 
@@ -17,9 +17,9 @@ installDeps =
     ${opam} init --no-opamrc --no-setup
     eval $(${opam} env)
     current=$(${opam} switch show)
-    if [[ $current != "4.10" ]]
+    if [[ $current != "${switch}" ]]
     then
-      ${opam} switch create 4.10 ocaml-base-compiler.4.10.2
+      ${opam} switch create ${switch} ${compiler}
     fi
     eval $(${opam} env)
     ${opamPkg "ocamlfind"}
