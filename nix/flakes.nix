@@ -17,7 +17,7 @@ let
     };
     defaultApp = apps.install;
     devShell = pkgs.mkShell {
-      buildInputs = with pkgs; (extraInputs pkgs) ++ [
+      buildInputs = with pkgs; extraInputs pkgs ++ [
         bazel
         pkg-config
       ];

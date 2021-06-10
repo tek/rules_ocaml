@@ -1,0 +1,15 @@
+load("@bazel_skylib//rules:write_file.bzl", "write_file")
+load("@obazl_rules_ocaml//ocaml:rules.bzl", "ppx_module")
+
+write_file(
+    name = "gendriver",
+    out = "ppx_driver.ml",
+    content = ["let () = Ppxlib.Driver.standalone ()"],
+)
+
+ppx_module(
+    name = "ppx_driver",
+    deps_opam = ["ppxlib"],
+    struct = ":ppx_driver.ml",
+    visibility = ["//visibility:public"],
+)
