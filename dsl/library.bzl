@@ -48,18 +48,17 @@ def ppx_exe(name, deps):
         main = "@obazl_rules_ocaml//dsl:ppx_driver",
     )
 
-def ppx_args(name, tags = []):
+def ppx_args(name):
     return dict(
         ppx = ":ppx_" + name,
         ppx_print = "@ppx//print:text",
-        ppx_tags = tags,
     )
 
-def lib(name, modules, ns = True, wrapped = False, deps = [], ppx = dict(), ppx_deps = False, **kw):
+def lib(name, modules, ns = True, wrapped = False, deps = [], ppx = [], ppx_deps = False, **kw):
     use_ppx = ppx_deps or ppx
     if ppx:
-        ppx_exe(name, ppx.get("deps", []))
-        kw.update(ppx_args(name, tags = ppx.get("tags", [])))
+        ppx_exe(name, ppx)
+        kw.update(ppx_args(name))
     lib_name = "lib-" + name
     ns_name = "#" + name.capitalize().replace("-", "_")
     targets = [sig_module(mod_name, conf, deps = deps, use_ppx = use_ppx, **kw) for (mod_name, conf) in modules.items()]
