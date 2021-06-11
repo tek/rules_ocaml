@@ -21,7 +21,12 @@ let
     defaultApp = apps.install;
     devShell = pkgs.mkShell {
       buildInputs = with pkgs; extraInputs pkgs ++ [
+        autoconf
+        automake
         bazel
+        gcc
+        libtool
+        m4
         pkg-config
       ];
       inherit (opam) shellHook;
