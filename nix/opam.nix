@@ -28,7 +28,7 @@ installDeps =
 
   shellHook = ''
     export OPAMROOT=''$${root} OPAMNO=true
-    if [[ ! -d $OPAMROOT ]]
+    if [[ ! -d $(readlink $OPAMROOT) ]]
     then
       nix run .#install
     fi
