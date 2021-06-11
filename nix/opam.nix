@@ -29,7 +29,7 @@ installDeps =
 
   shellHook = ''
     export OPAMROOT="${root}" OPAMNO=true
-    if [[ ! -f $OPAMROOT/config ]]
+    if [[ ! -d $OPAMROOT/${switch} ]]
     then
       if [[ $OPAMROOT != $REALROOT ]]
       then
