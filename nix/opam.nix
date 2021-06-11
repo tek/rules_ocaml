@@ -21,13 +21,14 @@ let
     then
       ${opam} install -y ${name}
     else
-      echo ${name} version: $installed
+      echo ">>> ${name} version: $installed"
     fi
   '';
 
 installDeps =
   pkgs.writeScript "install-deps" ''
     set -e
+    echo ">>> installing to ${root}..."
     ${opam} init --no-opamrc --no-setup --bare
     eval $(${opam} env)
     current=$(${opam} switch show || true)
