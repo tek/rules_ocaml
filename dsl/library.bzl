@@ -55,7 +55,7 @@ def ppx_args(name, tags = []):
         ppx_tags = tags,
     )
 
-def lib(name, modules, ns = True, deps = [], ppx = dict(), ppx_deps = False, **kw):
+def lib(name, modules, ns = True, wrapped = False, deps = [], ppx = dict(), ppx_deps = False, **kw):
     use_ppx = ppx_deps or ppx
     if ppx:
         ppx_exe(name, ppx.get("deps", []))
@@ -65,11 +65,12 @@ def lib(name, modules, ns = True, deps = [], ppx = dict(), ppx_deps = False, **k
     targets = [sig_module(mod_name, conf, deps = deps, use_ppx = use_ppx, **kw) for (mod_name, conf) in modules.items()]
     cons = ppx_library if use_ppx else ocaml_library
     cons_ns = ppx_ns_library if use_ppx else ocaml_ns_library
-    cons(
-        name = lib_name,
-        modules = targets,
-        visibility = ["//visibility:public"],
-    )
+    if not wrapped:
+        cons(
+            name = lib_name,
+            modules = targets,
+            visibility = ["//visibility:public"],
+        )
     if ns:
         cons_ns(
             name = ns_name,
