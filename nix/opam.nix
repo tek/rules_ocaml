@@ -1,5 +1,18 @@
-{ pkgs, depsOpam ? [], switch ? "4.10", compiler ? "ocaml-base-compiler.4.10.2", root ? "$PWD/.opam", ... }:
+{
+  pkgs,
+  depsOpam ? [],
+  switch ? "4.10",
+  compiler ? "ocaml-base-compiler.4.10.2",
+  opamRoot ? null,
+  localOpam ? false,
+  ...
+}:
 let
+  root =
+    if opamRoot == null
+    then if localOpam then "$PWD/.opam" else "$HOME/.opam"
+    else opamRoot;
+
   opam = "${pkgs.opam}/bin/opam";
 
   opamPkg = name: pkgs.writeScript "install-${name}" ''
