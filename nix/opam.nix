@@ -1,4 +1,4 @@
-{ pkgs, depsOpam ? [], switch ? "4.10", compiler ? "ocaml-base-compiler.4.10.2", ... }:
+{ pkgs, depsOpam ? [], switch ? "4.10", compiler ? "ocaml-base-compiler.4.10.2", root ? "$PWD/.opam", ... }:
 let
   opam = "${pkgs.opam}/bin/opam";
 
@@ -27,7 +27,7 @@ installDeps =
   '';
 
   shellHook = ''
-    export OPAMROOT=$PWD/.opam OPAMNO=true
+    export OPAMROOT=''$${root} OPAMNO=true
     if [[ ! -d $OPAMROOT ]]
     then
       nix run .#install
