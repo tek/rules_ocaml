@@ -14,9 +14,10 @@ let
 
 installDeps =
   pkgs.writeScript "install-deps" ''
-    ${opam} init --no-opamrc --no-setup
+    set -e
+    ${opam} init --no-opamrc --no-setup --bare
     eval $(${opam} env)
-    current=$(${opam} switch show)
+    current=$(${opam} switch show || true)
     if [[ $current != "${switch}" ]]
     then
       ${opam} switch create ${switch} ${compiler}
@@ -28,8 +29,12 @@ installDeps =
 
   shellHook = ''
     export OPAMROOT="${root}" OPAMNO=true
-    if [[ ! -d $(readlink $OPAMROOT) ]]
+    if [[ ! -f $OPAMROOT/config ]]
     then
+      if [[ $OPAMROOT != $REALROOT ]]
+      then
+        mkdir -p $REALROOT
+      fi
       nix run .#install
     fi
     eval $(${opam} env)
