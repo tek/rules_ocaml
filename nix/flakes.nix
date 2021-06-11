@@ -10,12 +10,17 @@ let
   main = system: 
   let
     pkgs = import nixpkgs { inherit system; };
+
     opam = import ./opam.nix ({ inherit pkgs; } // args);
+
+    installDeps = pkgs.writeScript "install-opam-deps" ''
+      nix develop -c ${opam.installDeps}
+    '';
   in rec {
     apps = {
       install = {
         type = "app";
-        program = "${opam.installDeps}";
+        program = "${installDeps}";
       };
     };
     defaultApp = apps.install;
