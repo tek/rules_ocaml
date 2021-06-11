@@ -27,7 +27,7 @@ def sig_module(name, conf, deps = [], use_ppx = False, **kw):
         ocaml_signature(
             name = sig,
             src = conf.get("sig_src", name + ".mli"),
-            deps = all_deps,
+            deps = all_deps + conf.get("sig_deps", []),
             **kw
         )
     cons = ppx_module if use_ppx else ocaml_module
@@ -35,7 +35,7 @@ def sig_module(name, conf, deps = [], use_ppx = False, **kw):
         cons(
             name = name,
             struct = struct,
-            deps = all_deps,
+            deps = all_deps + conf.get("mod_deps", []),
             sig = sig,
             **kw,
         )
