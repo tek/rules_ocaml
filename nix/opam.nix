@@ -46,11 +46,11 @@ installDeps =
     if [[ ! -d $OPAMROOT/${switch} ]]
     then
       REALROOT=$(readlink $OPAMROOT)
-      if [[ $OPAMROOT != $REALROOT ]]
+      if [[ -n $REALROOT && $OPAMROOT != $REALROOT ]]
       then
         mkdir -p $REALROOT
       fi
-      nix run .#install
+      ${installDeps}
     fi
     eval $(${opam} env)
   '';
