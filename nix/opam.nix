@@ -45,6 +45,7 @@ installDeps =
     export OPAMROOT="${root}" OPAMNO=true
     if [[ ! -d $OPAMROOT/${switch} ]]
     then
+      REALROOT=$(readlink $OPAMROOT)
       if [[ $OPAMROOT != $REALROOT ]]
       then
         mkdir -p $REALROOT
