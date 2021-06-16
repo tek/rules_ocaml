@@ -16,10 +16,10 @@ let
   opam = "${pkgs.opam}/bin/opam";
 
   opamPkg = name: pkgs.writeScript "install-${name}" ''
-    installed=$(${opam} show -f installed-version ${name})
+    installed=$(${opam} show --switch ${switch} -f installed-version ${name})
     if [[ $installed == '--' ]]
     then
-      ${opam} install -y ${name}
+      ${opam} install --switch ${switch} -y ${name}
     else
       echo ">>> ${name} version: $installed"
     fi
