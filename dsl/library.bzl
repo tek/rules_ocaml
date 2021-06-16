@@ -54,7 +54,7 @@ def ppx_args(name):
         ppx_print = "@ppx//print:text",
     )
 
-def lib(name, modules, ns = True, wrapped = False, deps = [], ppx = [], ppx_deps = False, **kw):
+def lib(name, modules, ns = True, wrapped = False, ppx = [], ppx_deps = False, **kw):
     use_ppx = ppx_deps or ppx
     if ppx:
         ppx_exe(name, ppx)
