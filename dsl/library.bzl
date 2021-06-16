@@ -61,7 +61,7 @@ def lib(name, modules, ns = True, wrapped = False, ppx = [], ppx_deps = False, *
         kw.update(ppx_args(name))
     lib_name = "lib-" + name
     ns_name = "#" + name.capitalize().replace("-", "_")
-    targets = [sig_module(mod_name, conf, deps = deps, use_ppx = use_ppx, **kw) for (mod_name, conf) in modules.items()]
+    targets = [sig_module(mod_name, conf, use_ppx = use_ppx, **kw) for (mod_name, conf) in modules.items()]
     cons = ppx_library if use_ppx else ocaml_library
     cons_ns = ppx_ns_library if use_ppx else ocaml_ns_library
     if not wrapped:
