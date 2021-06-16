@@ -31,12 +31,11 @@ installDeps =
     echo ">>> installing to ${root}..."
     ${opam} init --no-opamrc --no-setup --bare
     eval $(${opam} env)
-    current=$(${opam} switch show || true)
-    if [[ $current != "${switch}" ]]
+    if [[ ! -d ${root}/${switch} ]]
     then
       ${opam} switch create ${switch} ${compiler}
+      eval $(${opam} env)
     fi
-    eval $(${opam} env)
     ${opamPkg "ocamlfind"}
     ${pkgs.lib.strings.concatMapStringsSep "\n" opamPkg depsOpam}
   '';
