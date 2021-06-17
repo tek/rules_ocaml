@@ -54,28 +54,33 @@ def ppx_args(name):
         ppx_print = "@ppx//print:text",
     )
 
-def lib(name, modules, ns = True, wrapped = False, ppx = [], ppx_deps = False, **kw):
+def wrapped_lib(name, targets, use_ppx = False):
+    cons_wrapped = ppx_ns_library if use_ppx else ocaml_ns_library
+    wrapped_name = "#" + name.capitalize().replace("-", "_")
+    cons_wrapped(
+        name = wrapped_name,
+        submodules = targets,
+        visibility = ["//visibility:public"],
+    )
+
+def unwrapped_lib(name, targets, use_ppx = False):
+    cons_unwrapped = ppx_library if use_ppx else ocaml_library
+    unwrapped_name = "lib-" + name
+    cons_unwrapped(
+        name = unwrapped_name,
+        modules = targets,
+        visibility = ["//visibility:public"],
+    )
+
+def lib(name, modules, wrapped = True, ppx = [], ppx_deps = False, **kw):
     use_ppx = ppx_deps or ppx
     if ppx:
         ppx_exe(name, ppx)
         kw.update(ppx_args(name))
-    lib_name = "lib-" + name
-    ns_name = "#" + name.capitalize().replace("-", "_")
     targets = [sig_module(mod_name, conf, use_ppx = use_ppx, **kw) for (mod_name, conf) in modules.items()]
-    cons = ppx_library if use_ppx else ocaml_library
-    cons_ns = ppx_ns_library if use_ppx else ocaml_ns_library
+    wrapped_lib(name, targets, use_ppx = use_ppx)
     if not wrapped:
-        cons(
-            name = lib_name,
-            modules = targets,
-            visibility = ["//visibility:public"],
-        )
-    if ns:
-        cons_ns(
-            name = ns_name,
-            submodules = targets,
-            visibility = ["//visibility:public"],
-        )
+        unwrapped_lib(name, targets, use_ppx = use_ppx)
 
 def simple_lib(modules, sig = True, **kw):
     targets = dict([(name, dict(deps = deps, sig = sig)) for (name, deps) in modules.items()])
