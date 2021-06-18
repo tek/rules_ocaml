@@ -45,9 +45,12 @@ def sig_module(name, conf, deps = [], use_ppx = False, **kw):
     return ":" + name
 
 def ppx_exe(name, deps):
+    deps_opam = [d for d in deps if not d.startswith("//")]
+    deps = [d for d in deps if d.startswith("//")]
     ppx_executable(
         name = "ppx_" + name,
-        deps_opam = deps,
+        deps_opam = deps_opam,
+        deps = deps,
         main = "@obazl_rules_ocaml//dsl:ppx_driver",
     )
 
