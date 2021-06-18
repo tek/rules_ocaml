@@ -60,8 +60,8 @@ def ppx_args(name):
         ppx_print = "@ppx//print:text",
     )
 
-def wrapped_lib(name, targets, use_ppx = False):
-    cons_wrapped = ppx_ns_library if use_ppx else ocaml_ns_library
+def wrapped_lib(name, targets, ppx = False):
+    cons_wrapped = ppx_ns_library if ppx else ocaml_ns_library
     wrapped_name = "#" + name.capitalize().replace("-", "_")
     cons_wrapped(
         name = wrapped_name,
@@ -69,8 +69,8 @@ def wrapped_lib(name, targets, use_ppx = False):
         visibility = ["//visibility:public"],
     )
 
-def unwrapped_lib(name, targets, use_ppx = False):
-    cons_unwrapped = ppx_library if use_ppx else ocaml_library
+def unwrapped_lib(name, targets, ppx = False):
+    cons_unwrapped = ppx_library if ppx else ocaml_library
     unwrapped_name = "lib-" + name
     cons_unwrapped(
         name = unwrapped_name,
@@ -78,16 +78,28 @@ def unwrapped_lib(name, targets, use_ppx = False):
         visibility = ["//visibility:public"],
     )
 
-def lib(name, modules, wrapped = True, ppx = [], ppx_deps = False, extra_targets = [], **kw):
+def module_set(name, modules, ppx = [], ppx_deps = False, **kw):
     use_ppx = ppx_deps or ppx
+    kw.update(use_ppx = use_ppx)
     if ppx:
         ppx_exe(name, ppx)
         kw.update(ppx_args(name))
-    main_targets = [sig_module(mod_name, conf, use_ppx = use_ppx, **kw) for (mod_name, conf) in modules.items()]
-    targets = main_targets + extra_targets
-    wrapped_lib(name, targets, use_ppx = use_ppx)
+    return [sig_module(mod_name, conf, **kw) for (mod_name, conf) in modules.items()]
+
+def lib(name, modules, wrapped = True, ppx = [], ppx_deps = False, deps = [], extra_modules = [], **kw):
+    use_ppx = ppx_deps or ppx
+    main_targets = module_set(
+        name,
+        modules,
+        ppx = ppx,
+        ppx_deps = ppx_deps,
+        deps = deps + extra_modules,
+        **kw,
+    )
+    targets = main_targets + extra_modules
+    wrapped_lib(name, targets, ppx = use_ppx)
     if not wrapped:
-        unwrapped_lib(name, targets, use_ppx = use_ppx)
+        unwrapped_lib(name, targets, ppx = use_ppx)
 
 def simple_lib(modules, sig = True, **kw):
     targets = dict([(name, dict(deps = deps, sig = sig)) for (name, deps) in modules.items()])
