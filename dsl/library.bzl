@@ -20,6 +20,7 @@ def copy_interface(name, out):
     )
 
 def sig_module(name, conf, deps = [], use_ppx = False, **kw):
+    name = conf.get("name", name)
     struct = conf.get("mod_src", name + ".ml")
     sig = name if conf.get("sigonly", False) else (
         conf.get("sig_name", name + "__sig" if conf.get("sig", False) else None)
