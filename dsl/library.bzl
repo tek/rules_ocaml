@@ -42,7 +42,7 @@ def sig_module(name, conf, deps = [], use_ppx = False, **kw):
             sig = sig,
             **kw,
         )
-    return name
+    return ":" + name
 
 def ppx_exe(name, deps):
     ppx_executable(
