@@ -30,7 +30,7 @@ def sig_module(name, conf, deps = [], use_ppx = False, **kw):
             name = sig,
             src = conf.get("sig_src", name + ".mli"),
             deps = all_deps + conf.get("sig_deps", []),
-            **kw
+            **kw,
         )
     cons = ppx_module if use_ppx else ocaml_module
     if not conf.get("sigonly"):
@@ -74,12 +74,13 @@ def unwrapped_lib(name, targets, use_ppx = False):
         visibility = ["//visibility:public"],
     )
 
-def lib(name, modules, wrapped = True, ppx = [], ppx_deps = False, **kw):
+def lib(name, modules, wrapped = True, ppx = [], ppx_deps = False, extra_targets = [], **kw):
     use_ppx = ppx_deps or ppx
     if ppx:
         ppx_exe(name, ppx)
         kw.update(ppx_args(name))
-    targets = [sig_module(mod_name, conf, use_ppx = use_ppx, **kw) for (mod_name, conf) in modules.items()]
+    main_targets = [sig_module(mod_name, conf, use_ppx = use_ppx, **kw) for (mod_name, conf) in modules.items()]
+    targets = main_targets + extra_targets
     wrapped_lib(name, targets, use_ppx = use_ppx)
     if not wrapped:
         unwrapped_lib(name, targets, use_ppx = use_ppx)
