@@ -18,12 +18,12 @@ let
   opamPkg = spec:
   let
     dep = if builtins.isAttrs spec then spec else { name = spec; version = ""; };
-    spec = if dep.version == "" then dep.name else "${dep.name}.${dep.version}";
+    opam_spec = if dep.version == "" then dep.name else "${dep.name}.${dep.version}";
   in pkgs.writeScript "install-${dep.name}" ''
     installed=$(${opam} show --switch ${switch} -f installed-version ${dep.name})
     if [[ $installed == '--' ]] || ( [[ $installed != '${dep.version}' ]] && [[ -n "${dep.version}" ]] ) 
     then
-      ${opam} install --switch ${switch} -y ${spec}
+      ${opam} install --switch ${switch} -y ${opam_spec}
     else
       echo ">>> ${dep.name} version: $installed"
     fi
