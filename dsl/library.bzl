@@ -34,6 +34,7 @@ def sig_module(name, conf, deps = [], use_ppx = False, **kw):
             **kw,
         )
     cons = ppx_module if use_ppx else ocaml_module
+    kw.update(conf.get("mod_kw", dict()))
     if not conf.get("sigonly"):
         cons(
             name = name,
