@@ -28,7 +28,7 @@ let
       buildInputs = with pkgs; extraInputs pkgs ++ [
         autoconf
         automake
-        bazel
+        bazel_4
         gcc
         libtool
         m4
