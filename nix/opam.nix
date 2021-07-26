@@ -29,7 +29,7 @@ let
     fi
   '';
 
-installDeps =
+  installDeps =
   pkgs.writeScript "install-deps" ''
     set -e
     echo ">>> installing to ${root}..."

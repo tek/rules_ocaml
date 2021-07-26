@@ -7,11 +7,28 @@
   ...
 }:
 let
+  opamEnv = pkgs:
+  import ./opam.nix ({ inherit pkgs; } // args);
+
+  shell = pkgs:
+  pkgs.mkShell {
+    buildInputs = with pkgs; extraInputs pkgs ++ [
+      autoconf
+      automake
+      bazel_4
+      gcc
+      libtool
+      m4
+      pkg-config
+    ];
+    inherit (opamEnv pkgs) shellHook;
+  };
+
   main = system: 
   let
     pkgs = import nixpkgs { inherit system; };
 
-    opam = import ./opam.nix ({ inherit pkgs; } // args);
+    opam = opamEnv pkgs;
 
     installDeps = pkgs.writeScript "install-opam-deps" ''
       nix develop -c ${opam.installDeps}
@@ -24,17 +41,9 @@ let
       };
     };
     defaultApp = apps.install;
-    devShell = pkgs.mkShell {
-      buildInputs = with pkgs; extraInputs pkgs ++ [
-        autoconf
-        automake
-        bazel_4
-        gcc
-        libtool
-        m4
-        pkg-config
-      ];
-      inherit (opam) shellHook;
-    };
+    devShell = shell pkgs;
   };
-in flake-utils.lib.eachSystem ["x86_64-linux"] main
+in {
+  inherit opamEnv shell main;
+  systems = flake-utils.lib.eachSystem ["x86_64-linux"] main;
+}
