@@ -7,8 +7,9 @@
   };
 
   outputs = inputs:
-  {
+  rec {
     opam = import ./nix/opam.nix;
     flakes = import ./nix/flakes.nix inputs;
+    systems = args: (flakes args).systems;
   };
 }
