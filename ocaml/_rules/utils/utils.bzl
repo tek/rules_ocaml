@@ -5,7 +5,7 @@ NEGATION_OPTS = [
     "-no-g", "-no-noassert",
     "-no-linkall",
     "-no-short-paths", "-no-strict-formats", "-no-strict-sequence",
-    "-no-keep-locs", "-no-opaque",
+    "-no-opaque",
     "-no-thread", "-no-verbose"
 ]
 
