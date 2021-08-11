@@ -231,7 +231,6 @@ def _ocaml_signature_impl(ctx):
                 order = "postorder",
                 transitive = merged_archived_modules_depsets
             ),
-            virtual = ctx.attr.virtual,
     )
 
     opamProvider = OpamDepsProvider(
@@ -309,10 +308,6 @@ In addition to the [OCaml configurable defaults](#configdefs) that apply to all
         # ),
         deps_opam = attr.string_list(
             doc = "List of OPAM package names"
-        ),
-        virtual = attr.bool(
-            doc = "A virtual module must be implemented in a dependent library to be linked",
-            default = False,
         ),
         ################################################################
         ## do we need resolver for sigfiles?

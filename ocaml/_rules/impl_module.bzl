@@ -110,24 +110,18 @@ def impl_module(ctx):
     includes   = []
     outputs   = []
 
-    has_sig = len(ctx.attr.sig) == 1
+    has_sig = len(ctx.attr.sig) > 0
     sig = None
     prefixes = None
-    virtual = False
+    virtual = bool(ctx.attr.implements)
     deps = ctx.attr.deps
     dep_files = ctx.files.deps
 
-    if has_sig:
-        sig = ctx.attr.sig[0]
-        sig_provider = sig[OcamlSignatureProvider]
-        virtual = sig_provider.virtual
-        # Virtual module implementations need to use the ns prefix that the interface uses
-        if virtual:
-            if not ctx.attr.implements:
-                fail("Signature is virtual, but this module doesn't define the attr `implements`.")
-            prefixes = get_sig_prefixes(ctx.attr.implements)
-            deps = deps + [ctx.attr.implements]
-            dep_files = dep_files + [ctx.attr.implements.files]
+    if ctx.attr.implements:
+        virtual = True
+        prefixes = get_sig_prefixes(ctx.attr.implements)
+        deps = deps + [ctx.attr.implements]
+        dep_files = dep_files + [ctx.attr.implements.files]
 
     (from_name, module_name) = get_module_name(ctx, ctx.file.struct, prefixes)
 
