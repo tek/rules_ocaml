@@ -21,7 +21,7 @@ load("//ocaml/_rules/utils:rename.bzl",
      "get_module_name",
      "rename_srcfile")
 
-load("//ocaml/_rules/utils:utils.bzl", "get_options", "find_sig_prefixes", "is_cmi")
+load("//ocaml/_rules/utils:utils.bzl", "get_options", "find_sig_prefixes", "is_cmi", "get_sig_prefixes")
 
 load("//ocaml/_functions:utils.bzl",
      "capitalize_initial_char",
@@ -114,6 +114,8 @@ def impl_module(ctx):
     sig = None
     prefixes = None
     virtual = False
+    deps = ctx.attr.deps
+    dep_files = ctx.files.deps
 
     if has_sig:
         sig = ctx.attr.sig[0]
@@ -121,7 +123,11 @@ def impl_module(ctx):
         virtual = sig_provider.virtual
         # Virtual module implementations need to use the ns prefix that the interface uses
         if virtual:
-            prefixes = find_sig_prefixes(ctx.attr.name, sig, ctx.attr.deps)
+            if not ctx.attr.implements:
+                fail("Signature is virtual, but this module doesn't define the attr `implements`.")
+            prefixes = get_sig_prefixes(ctx.attr.implements)
+            deps = deps + [ctx.attr.implements]
+            dep_files = dep_files + [ctx.attr.implements.files]
 
     (from_name, module_name) = get_module_name(ctx, ctx.file.struct, prefixes)
 
@@ -157,7 +163,7 @@ def impl_module(ctx):
         out_cmt = ctx.actions.declare_file(scope + paths.replace_extension(module_name, ".cmt"))
         outputs.append(out_cmt)
 
-    merge_deps(ctx.attr.deps + [ctx.attr._ns_resolver],
+    merge_deps(deps + [ctx.attr._ns_resolver],
                merged_module_links_depsets,
                merged_archive_links_depsets,
                merged_paths_depsets,
@@ -209,7 +215,7 @@ def impl_module(ctx):
     ## use depsets to get the right ordering. filter to limit to direct deps.
     module_links_depset = depset(transitive = merged_module_links_depsets)
     for dep in module_links_depset.to_list():
-        if dep in ctx.files.deps:
+        if dep in dep_files:
             if not is_cmi(dep):
                 args.add(dep)
 

@@ -217,6 +217,10 @@ def options_module(ws):
             providers = [OcamlSignatureProvider],
             cfg = ocaml_module_deps_out_transition
         ),
+        implements = attr.label(
+            doc = "Virtual module implementations must specify the interface's library in this if it is namespaced.",
+            providers = [[OcamlNsLibraryProvider], [PpxNsLibraryProvider]],
+        ),
         ################
         deps = attr.label_list(
             doc = "List of OCaml dependencies.",
