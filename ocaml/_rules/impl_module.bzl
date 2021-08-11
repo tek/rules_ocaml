@@ -21,7 +21,7 @@ load("//ocaml/_rules/utils:rename.bzl",
      "get_module_name",
      "rename_srcfile")
 
-load("//ocaml/_rules/utils:utils.bzl", "get_options", "find_sig_prefixes", "is_cmi", "get_sig_prefixes")
+load("//ocaml/_rules/utils:utils.bzl", "get_options", "is_cmi", "get_sig_prefixes")
 
 load("//ocaml/_functions:utils.bzl",
      "capitalize_initial_char",
