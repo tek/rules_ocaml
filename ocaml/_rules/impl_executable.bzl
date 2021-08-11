@@ -1,5 +1,6 @@
 load("@bazel_skylib//rules:common_settings.bzl", "BuildSettingInfo")
 load("@bazel_tools//tools/cpp:toolchain_utils.bzl", "find_cpp_toolchain")
+load("@bazel_skylib//lib:paths.bzl", "paths")
 
 load("//ocaml:providers.bzl",
      "AdjunctDepsProvider",
@@ -10,7 +11,7 @@ load("//ocaml:providers.bzl",
      "PpxExecutableProvider"
 )
 
-load("//ocaml/_rules/utils:utils.bzl", "get_options")
+load("//ocaml/_rules/utils:utils.bzl", "get_options", "is_cmi")
 
 load("//ocaml/_functions:utils.bzl",
      "get_opamroot",
@@ -249,7 +250,10 @@ def impl_executable(ctx):
     links = depset(order = "postorder", transitive = merged_module_links_depsets).to_list()
     if len(links) > 0:
         for m in links:
-            args.add(m)
+            # cmis may be emitted by ns libraries for virtual modules
+            # TODO maybe this should be done by omitting cmis from the library's outputs
+            if not is_cmi(m):
+                args.add(m)
 
     args.add("-o", out_exe)
 

@@ -17,7 +17,7 @@ This rule initializes a 'namespace evaluation environment' consisting of a pseud
 
 You may use the [ppx_ns](macros.md#ppx_ns) macro instead of instantiating this rule directly.
 
-This rule is designed to work in conjujnction with rules
+This rule is designed to work in conjunction with rules
 [ocaml_module](rules_ocaml.md#ocaml_module) and
 [ocaml_ns_module](rules_ocaml.md#ocaml_ns_module). An `ocaml_module`
 instance can use the prefix string of an `ppx_ns` to rename its

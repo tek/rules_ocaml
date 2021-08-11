@@ -1,5 +1,6 @@
 load("@bazel_skylib//rules:common_settings.bzl", "BuildSettingInfo")
-load("//ocaml:providers.bzl", "OcamlVerboseFlagProvider")
+load("//ocaml:providers.bzl", "OcamlVerboseFlagProvider", "OcamlNsLibraryProvider", "PpxNsLibraryProvider")
+load("@bazel_skylib//lib:paths.bzl", "paths")
 
 NEGATION_OPTS = [
     "-no-g", "-no-noassert",
@@ -87,3 +88,28 @@ def get_options(rule, ctx):
 
     return options
 
+# For virtual modules.
+# Finds the library among the deps that contains the virtual interface, so that its prefix can be used to assemble the
+# file name of the implementing module.
+def find_sig_prefixes(mod_label, sig, deps):
+    for dep in deps:
+        if OcamlNsLibraryProvider in dep:
+            pro = dep[OcamlNsLibraryProvider]
+            for mod in pro.submodules:
+                if mod.label == sig.label:
+                    return [pro.prefix]
+        elif PpxNsLibraryProvider in dep:
+            pro = dep[PpxNsLibraryProvider]
+            for mod in pro.submodules:
+                if mod.label == sig.label:
+                    return [pro.prefix]
+    # TODO this could be done if we're sure we need a namespace
+    # fail("Virtual module implementation `{}` depends on signature `{}`, whose library is not a dependency".format(
+    #     mod_label,
+    #     sig.label,
+    # ))
+    return []
+
+def is_cmi(file):
+    name, ext = paths.split_extension(file.path)
+    return ext == ".cmi"

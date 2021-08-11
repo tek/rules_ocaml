@@ -99,7 +99,7 @@ def _ocaml_signature_impl(ctx):
     ################
     includes   = []
 
-    (from_name, module_name) = get_module_name(ctx, ctx.file.src)
+    (from_name, module_name) = get_module_name(ctx, ctx.file.src, None)
 
     out_cmi = ctx.actions.declare_file(scope + module_name + ".cmi")
 
@@ -157,10 +157,13 @@ def _ocaml_signature_impl(ctx):
 
     args.add_all(includes, before_each="-I", uniquify = True)
 
+    prefixes = []
+
     ## FIXME: do we need to add links to cmd line, as modules do?
 
     ## FIXME: do we need the resolver for sigfiles?
     if hasattr(ctx.attr._ns_resolver[OcamlNsResolverProvider], "resolver"):
+        prefixes = ctx.attr._ns_resolver[OcamlNsResolverProvider].prefixes
         ## this will only be the case if this is a submodule of an nslib
         args.add("-no-alias-deps")
         args.add("-open", ctx.attr._ns_resolver[OcamlNsResolverProvider].resolver)
@@ -231,6 +234,8 @@ def _ocaml_signature_impl(ctx):
                 order = "postorder",
                 transitive = merged_archived_modules_depsets
             ),
+            virtual = ctx.attr.virtual,
+            prefixes = prefixes,
     )
 
     opamProvider = OpamDepsProvider(
@@ -308,6 +313,10 @@ In addition to the [OCaml configurable defaults](#configdefs) that apply to all
         # ),
         deps_opam = attr.string_list(
             doc = "List of OPAM package names"
+        ),
+        virtual = attr.bool(
+            doc = "A virtual module must be implemented in a dependent library to be linked",
+            default = False,
         ),
         ################################################################
         ## do we need resolver for sigfiles?

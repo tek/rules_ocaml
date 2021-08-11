@@ -34,6 +34,7 @@ def impl_ns_library(ctx):
     if ctx.attr._rule in ["ocaml_ns_library", "ppx_ns_library"]:
         if not ctx.label.name.startswith("#"):
             fail("NS Library names must start with at least one '#' followed by a legal OCaml module name: %s" % ctx.label.name)
+    prefix = ctx.label.name[1:]
 
     env = {"OPAMROOT": get_opamroot(),
            "PATH": get_sdkpath(ctx)}
@@ -120,6 +121,8 @@ def impl_ns_library(ctx):
                 order = "postorder",
                 transitive = merged_archived_modules_depsets
             ),
+            submodules = ctx.attr.submodules,
+            prefix = prefix,
         )
     else:
         nslibProvider = PpxNsLibraryProvider(
@@ -144,6 +147,8 @@ def impl_ns_library(ctx):
                 order = "postorder",
                 transitive = merged_archived_modules_depsets
             ),
+            submodules = ctx.attr.submodules,
+            prefix = prefix,
         )
 
     opam_depset = depset(transitive = indirect_opam_depsets)

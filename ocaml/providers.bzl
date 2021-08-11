@@ -234,7 +234,9 @@ OcamlNsLibraryProvider = provider(
         "archive_links":    "Depset of archive files to be linked by executable or archive rules.",
         "paths":    "Depset of paths for -I params",
         "depgraph": "Depset containing transitive closure of deps",
-        "archived_modules": "Depset containing archive contents"
+        "archived_modules": "Depset containing archive contents",
+        "submodules": "List of targets, verbatim from the attr",
+        "prefix": "NS prefix used by this lib",
     }
 )
 
@@ -245,7 +247,9 @@ OcamlSignatureProvider = provider(
         "archive_links":    "Depset of archive files to be linked by executable or archive rules.",
         "paths":    "Depset of paths for -I params",
         "depgraph": "Depset containing transitive closure of deps",
-        "archived_modules": "Depset containing archive contents"
+        "archived_modules": "Depset containing archive contents",
+        "virtual": "Whether this interface needs to be implemented in a dependent",
+        "prefixes": "Namespace prefixes for virtual module implementations",
     }
     # fields = module_fields
     # {
@@ -310,7 +314,9 @@ PpxNsLibraryProvider = provider(
         "archive_links":    "Depset of archive files to be linked by executable or archive rules.",
         "paths":    "Depset of paths for -I params",
         "depgraph": "Depset containing transitive closure of deps",
-        "archived_modules": "Depset containing archive contents"
+        "archived_modules": "Depset containing archive contents",
+        "submodules": "List of targets, verbatim from the attr",
+        "prefix": "NS prefix used by this lib",
     }
 )
 

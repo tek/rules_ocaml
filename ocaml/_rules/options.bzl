@@ -343,7 +343,7 @@ def options_ns_library(ws):
             [OcamlModuleProvider],
             [OcamlNsLibraryProvider],
             [PpxModuleProvider],
-            # [OcamlSignatureProvider]
+            [OcamlSignatureProvider]
         ]
         _sublib_providers = [
             # [OcamlNsArchiveProvider],

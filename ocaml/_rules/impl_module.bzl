@@ -21,7 +21,7 @@ load("//ocaml/_rules/utils:rename.bzl",
      "get_module_name",
      "rename_srcfile")
 
-load("//ocaml/_rules/utils:utils.bzl", "get_options")
+load("//ocaml/_rules/utils:utils.bzl", "get_options", "find_sig_prefixes", "is_cmi")
 
 load("//ocaml/_functions:utils.bzl",
      "capitalize_initial_char",
@@ -110,7 +110,20 @@ def impl_module(ctx):
     includes   = []
     outputs   = []
 
-    (from_name, module_name) = get_module_name(ctx, ctx.file.struct)
+    has_sig = len(ctx.attr.sig) == 1
+    sig = None
+    prefixes = None
+    virtual = False
+
+    if has_sig:
+        sig = ctx.attr.sig[0]
+        sig_provider = sig[OcamlSignatureProvider]
+        virtual = sig_provider.virtual
+        # Virtual module implementations need to use the ns prefix that the interface uses
+        if virtual:
+            prefixes = find_sig_prefixes(ctx.attr.name, sig, ctx.attr.deps)
+
+    (from_name, module_name) = get_module_name(ctx, ctx.file.struct, prefixes)
 
     out_cm_ = ctx.actions.declare_file(scope + module_name + ext) # fname)
     outputs.append(out_cm_)
@@ -119,7 +132,7 @@ def impl_module(ctx):
         out_o = ctx.actions.declare_file(tmpdir + module_name + ".o")
         outputs.append(out_o)
 
-    if not ctx.attr.sig:
+    if not (has_sig or virtual):
         ## no sigfile provided: compiler will infer and emit .cmi from .ml src,
         ## so we need to add the output file
         out_cmi = ctx.actions.declare_file(scope + module_name + ".cmi")
@@ -135,6 +148,10 @@ def impl_module(ctx):
 
     _options = get_options(ctx.attr._rule, ctx)
     args.add_all(_options)
+
+    # This module should not generate a `.cmi` if it implements a virtual signature from another package
+    if virtual:
+        args.add("-intf-suffix", ".ml")
 
     if "-bin-annot" in _options: ## Issue #17
         out_cmt = ctx.actions.declare_file(scope + paths.replace_extension(module_name, ".cmt"))
@@ -193,7 +210,8 @@ def impl_module(ctx):
     module_links_depset = depset(transitive = merged_module_links_depsets)
     for dep in module_links_depset.to_list():
         if dep in ctx.files.deps:
-            args.add(dep)
+            if not is_cmi(dep):
+                args.add(dep)
 
     if hasattr(ctx.attr._ns_resolver[OcamlNsResolverProvider], "resolver"):
         ## this will only be the case if this is a submodule of an nslib

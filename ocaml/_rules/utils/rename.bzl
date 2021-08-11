@@ -42,7 +42,7 @@ def _this_module_in_submod_list(ctx, src, submodules):
 ## FIXME: we don't need this for executables (including test rules)
 # if this is a submodule, add the prefix
 # otherwise, if ppx, rename
-def get_module_name (ctx, src):
+def get_module_name (ctx, src, force_prefixes = None):
     ## src: for modules, ctx.file.struct, for sigs, ctx.file.src
     debug = False
     # if ctx.label.name in ["_Red", "_Green", "_Blue"]:
@@ -56,8 +56,8 @@ def get_module_name (ctx, src):
     (this_module, extension) = paths.split_extension(src.basename)
     this_module = capitalize_initial_char(this_module)
 
-    if hasattr(ctx.attr._ns_resolver[OcamlNsResolverProvider], "prefixes"): # "prefix"):
-        ns_prefixes = ctx.attr._ns_resolver[OcamlNsResolverProvider].prefixes # .prefix
+    if hasattr(ns_resolver, "prefixes"): # "prefix"):
+        ns_prefixes = ns_resolver.prefixes # .prefix
         if len(ns_prefixes) == 0:
             out_module = this_module
         elif this_module == ns_prefixes[-1]:
@@ -66,11 +66,13 @@ def get_module_name (ctx, src):
         else:
             if len(ns_resolver.submodules) > 0:
                 if _this_module_in_submod_list(ctx, src, ns_resolver.submodules):
-                    if ctx.attr._ns_strategy[BuildSettingInfo].value == "fs":
-                        fs_prefix = get_fs_prefix(str(ctx.label)) + "__"
+                    if force_prefixes != None:
+                        prefixes = force_prefixes
+                    elif ctx.attr._ns_strategy[BuildSettingInfo].value == "fs":
+                        prefixes = [get_fs_prefix(str(ctx.label))]
                     else:
-                        fs_prefix = "__".join(ns_prefixes) + "__"
-                    out_module = fs_prefix + this_module
+                        prefixes = ns_prefixes
+                    out_module = ns_sep.join(prefixes + [this_module])
                 else:
                     out_module = this_module
             else:
