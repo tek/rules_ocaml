@@ -249,7 +249,6 @@ OcamlSignatureProvider = provider(
         "depgraph": "Depset containing transitive closure of deps",
         "archived_modules": "Depset containing archive contents",
         "virtual": "Whether this interface needs to be implemented in a dependent",
-        "prefixes": "Namespace prefixes for virtual module implementations",
     }
     # fields = module_fields
     # {
