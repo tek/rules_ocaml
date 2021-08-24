@@ -33,11 +33,19 @@ let
     installDeps = pkgs.writeScript "install-opam-deps" ''
       nix develop -c ${opam.installDeps}
     '';
+
+    installDepsEach = pkgs.writeScript "install-opam-deps-each" ''
+      nix develop -c ${opam.installDepsEach}
+    '';
   in rec {
     apps = {
       install = {
         type = "app";
         program = "${installDeps}";
+      };
+      installEach = {
+        type = "app";
+        program = "${installDepsEach}";
       };
     };
     defaultApp = apps.install;
