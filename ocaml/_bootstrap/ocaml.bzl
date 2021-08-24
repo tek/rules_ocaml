@@ -154,14 +154,20 @@ def _install_ocaml_templates(repo_ctx, projroot, opam_switch_prefix):
         },
     )
 
-    assembler = repo_ctx.which('as')
+    assembler = repo_ctx.which("as")
     if not assembler:
         fail('Could not find the assembler `as` for the cc toolchain in the environment.')
+    archiver = repo_ctx.which("ar")
+    if not archiver:
+        fail('Could not find the archiver `ar` for the cc toolchain in the environment.')
     repo_ctx.template(
         "toolchain/BUILD.bazel",
         Label(ws + "//ocaml/_templates:BUILD.ocaml.toolchain"),
         executable = False,
-        substitutions = { 'ASSEMBLER': str(assembler) },
+        substitutions = {
+            'ASSEMBLER': str(assembler),
+            'ARCHIVER': str(archiver),
+        },
     )
 
     repo_ctx.template(

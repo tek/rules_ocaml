@@ -40,6 +40,9 @@ _ocaml_tools_attrs = {
     "assembler": attr.string(
         doc = "Path to the 'as' executable"
     ),
+    "archiver": attr.string(
+        doc = "Path to the 'ar' executable"
+    ),
     ## FIXME: these should be provided by the toolchain definition?
     "_ocamlc": attr.label(
         default = Label("@ocaml//tools:ocamlc"),
@@ -154,6 +157,7 @@ def _ocaml_toolchain_impl(ctx):
         ocamllex   = ctx.attr._ocamllex.files.to_list()[0],
         ocamlyacc  = ctx.attr._ocamlyacc.files.to_list()[0],
         assembler = ctx.attr.assembler,
+        archiver = ctx.attr.archiver,
         copts       = ctx.attr._copts,
         # ocamlbuild = ctx.attr._ocamlbuild.files.to_list()[0],
         ocamlfind  = ctx.attr._ocamlfind.files.to_list()[0],
