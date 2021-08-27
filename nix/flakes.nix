@@ -53,5 +53,5 @@ let
   };
 in {
   inherit opamEnv shell main;
-  systems = flake-utils.lib.eachSystem ["x86_64-linux"] main;
+  systems = flake-utils.lib.eachDefaultSystem main;
 }
