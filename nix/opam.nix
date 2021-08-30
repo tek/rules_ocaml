@@ -51,7 +51,7 @@ let
   pkgs.writeScript "install-deps" ''
     set -e
     ${ensureSwitch}
-    opam install --switch ${switch} -y ${pkgs.lib.strings.concatMapStringsSep " " opamSpec depsOpam}
+    ${opam} install --switch ${switch} -y ${pkgs.lib.strings.concatMapStringsSep " " opamSpec depsOpam}
   '';
 
   installDepsEach =

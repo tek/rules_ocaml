@@ -19,6 +19,7 @@ let
       gcc
       libtool
       m4
+      opam
       pkg-config
     ];
     inherit (opamEnv pkgs) shellHook;
