@@ -86,6 +86,13 @@ def _handle_cc_deps(ctx,
                             cclib_deps.append(depfile)
                             cc_runfiles.append(dep.files)
         elif linkmode == "static":
+            for i in dep[CcInfo].linking_context.linker_inputs.to_list():
+                for l in i.libraries:
+                    staticlib = l.static_library
+                    if staticlib:
+                        args.add(staticlib)
+                        cclib_deps.append(staticlib)
+                        includes.append(staticlib.dirname)
             if debug:
                 print("STATIC lib: %s:" % dep)
             for depfile in dep.files.to_list():
